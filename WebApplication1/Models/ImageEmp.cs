@@ -7,7 +7,7 @@ namespace WebApplication1.Models
     public class ImageEmp
     {
         [Key]
-        public int Id { get; set; }
+        public int IMAGEId { get; set; }
 
         public string? Imagepath { get; set; }
 

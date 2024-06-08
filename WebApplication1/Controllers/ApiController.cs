@@ -1,10 +1,9 @@
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Metadata.Ecma335;
 using WebApplication1.DBconn;
 using WebApplication1.Models;
+using WebApplication1.Models.NewFolder;
+
 
 namespace WebApplication1.Controllers
 {
@@ -15,26 +14,66 @@ namespace WebApplication1.Controllers
     {
         private readonly Dbconn _db;
 
+        private readonly string _imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images");
+
         public EmpController(Dbconn db)
         {
+            if (!Directory.Exists(_imagePath))
+            {
+                Directory.CreateDirectory(_imagePath);
+            }
+
             _db = db;
         }
 
         [HttpGet]
         [Route("Home/ReadData")]
-        public async Task<List<Employee>> ReadData()
+        public async Task<ActionResult> ReadData()
         {
+            List<EmployeeViewMdel> list = new List<EmployeeViewMdel>();
+
+            var result = await _db.EmployeesViewMdels.FromSqlInterpolated($"GetData").ToListAsync();
+
+            foreach (var i in result)
+            {
+                list.Add(new EmployeeViewMdel
+                {
+                    Id = i.Id, 
+                    Name = i.Name,
+                    Age = i.Age,
+                    IMAGEId = i.IMAGEId,
+                    Imagepath = i.Imagepath,
+
+
+                });
+
+                if (i.Imagepath != null)
+                {
+                    var imagePath = Path.Combine(_imagePath, $"{i.Imagepath}");
+
+                    // Check if the image file exists
+                    if (System.IO.File.Exists(imagePath))
+                    {
+                        // Read the image file
+                        var imgFile = System.IO.File.ReadAllBytes(imagePath);
+
+
+                        //this code is for downloadable file.
+                        //File = File(imgFile, "application/octet-stream", imagePath);//
+                        
+                    }
+                }
+            }
+
             
-            var response = await _db.Employees.FromSqlRaw($"GetData").ToListAsync();
 
-
-            if (response == null)
+            if (list == null)
             {
                 return null;
             }
             else
             {
-                return response;
+                return Ok(list);
             }
 
         }
@@ -96,7 +135,7 @@ namespace WebApplication1.Controllers
         }
 
 
-        
+
 
 
     }
