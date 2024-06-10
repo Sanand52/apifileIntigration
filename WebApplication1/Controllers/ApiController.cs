@@ -42,8 +42,7 @@ namespace WebApplication1.Controllers
                     Name = i.Name,
                     Age = i.Age,
                     IMAGEId = i.IMAGEId,
-                    Imagepath = i.Imagepath,
-
+                    Imagepath = i.Imagepath, 
 
                 });
 

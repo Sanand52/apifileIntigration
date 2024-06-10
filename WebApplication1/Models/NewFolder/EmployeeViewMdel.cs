@@ -13,6 +13,7 @@ namespace WebApplication1.Models.NewFolder
         public int? Age { get; set; }
         public int? IMAGEId { get; set; }
         public string? Imagepath { get; set; }
+
         
 
     }
